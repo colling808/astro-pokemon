@@ -3,6 +3,7 @@ from pendulum import datetime
 import requests
 import json
 import csv
+import random
 from datetime import datetime as dt
 
 from airflow.decorators import (
@@ -17,7 +18,7 @@ from airflow.decorators import (
     default_args={
         "retries": 1,
     },
-    tags=["etl", "advanced"],
+    tags=["etl", "pokemon"],
 ) 
 def pokemon_etl():
     """
@@ -109,9 +110,10 @@ def pokemon_etl():
     @task()
     def email_results(filename, email_recipient="cguieb@astronomer.com"):
         """
-        #### This function just prints a log statement, but ideally it would send an email of the csv 
+        #### Email Task
+        This function just prints a log statement, but ideally it would send an email of the csv 
         """
-        print(f"Sending {filename} to {email_recipients}...")
+        print(f"Sending {filename} to {email_recipient}...")
 
     @task
     def choose_pokemon(csv_filename):
