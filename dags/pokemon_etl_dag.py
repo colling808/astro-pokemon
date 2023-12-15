@@ -111,8 +111,10 @@ def pokemon_etl():
     def email_results(filename, email_recipient="cguieb@astronomer.com"):
         """
         #### Email Task
-        This function just prints a log statement, but ideally it would send an email of the csv 
+        This function just prints a log statement, but ideally it would send an email of the csv.
         """
+
+        # TODO: Set up SMTP Email configuration in airflow.cfg
         print(f"Sending {filename} to {email_recipient}...")
 
     @task
