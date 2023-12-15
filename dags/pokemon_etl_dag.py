@@ -111,11 +111,20 @@ def pokemon_etl():
     def email_results(filename, email_recipient="cguieb@astronomer.com"):
         """
         #### Email Task
-        This function just prints a log statement, but ideally it would send an email of the csv.
+        This function just prints a log statement for demo purposes.
         """
 
-        # TODO: Set up SMTP Email configuration in airflow.cfg
         print(f"Sending {filename} to {email_recipient}...")
+
+
+    @task()
+    def ml_team_prediction(filename):
+        """
+        #### ML Team Prediction
+        This function just prints a log statement for demo purposes.
+        """
+
+        print(f"Calculating optimal Pokemon team based on {filename}...")
 
     @task
     def choose_pokemon(csv_filename):
@@ -148,6 +157,7 @@ def pokemon_etl():
     pokemon_data = extract_transform()
     csv_file = load(pokemon_data)
     email_results(csv_file)
+    ml_team_prediction(csv_file)
     pokemon_of_the_day = choose_pokemon(csv_file)
     fetch_sprite(pokemon_of_the_day)
 
