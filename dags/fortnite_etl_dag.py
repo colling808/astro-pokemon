@@ -1,6 +1,8 @@
 import json
 from pendulum import datetime
 
+from airflow.operators.empty import EmptyOperator
+from airflow.models.baseoperator import chain
 from airflow.decorators import (
     dag,
     task,
@@ -22,41 +24,26 @@ def fortnite_etl():
     Fortnite related data sets.
     """
 
-    @task()
-    def twitch_extract_to_bronze():
-        print("Extracting Fortnite Twitch data to bronze layer.")
+    # Bronze jobs
+    twitch_extract_to_bronze = EmptyOperator(task_id="twitch_extract_to_bronze")
+    discord_extract_to_bronze = EmptyOperator(task_id="discord_extract_to_bronze")
+    fortnite_api_extract_to_bronze = EmptyOperator(task_id="fortnite_api_extract_to_bronze")
+    steam_extract_to_bronze = EmptyOperator(task_id="steam_extract_to_bronze")
 
-    @task()
-    def discord_extract_to_bronze():
-        print("Extracting Fortnite Discord data to bronze layer.")
+    # Silver jobs
+    twitch_to_silver = EmptyOperator(task_id="twitch_to_silver")
+    discord_to_silver = EmptyOperator(task_id="discord_to_silver")
+    fortnite_api_to_silver = EmptyOperator(task_id="fortnite_api_to_silver")
+    steam_to_silver = EmptyOperator(task_id="steam_to_silver")
 
-    @task()
-    def fortnite_api_extract_to_bronze():
-        print("Extracting public Fortnite data via API to bronze layer.")
+    # Gold jobs
+    aggregate_gold_models = EmptyOperator(task_id="aggregate_gold_models")
 
-    @task()
-    def steam_extract_to_bronze():
-        print("Extracting Fortnite Steam data to bronze layer.")
+    # ML predictions
+    ml_predictions = EmptyOperator(task_id="ml_predictions")
 
-    @task()
-    def twitch_to_silver():
-        print("Performing filtering, formatting, and deduplication transformations on Twitch data into silver layer.")
-
-    @task()
-    def discord_to_silver():
-        print("Performing filtering, formatting, and deduplication transformations on Discord data into silver layer.")
-
-    @task()
-    def fortnite_api_to_silver():
-        print("Performing filtering, formatting, and deduplication transformations on public Fortnite API data into silver layer.")
-
-    @task()
-    def steam_to_silver():
-        print("Performing filtering, formatting, and deduplication transformations on Steam data into silver layer.")
-
-    @task()
-    def aggregate_gold_models():
-        print("Calling DBT scripts to create dimensional models from the data in silver.")
+    # Refresh Dashboards
+    refresh_dashboards = EmptyOperator(task_id="refresh_dashboards")
 
 
     # Dependencies
@@ -64,6 +51,7 @@ def fortnite_etl():
         [twitch_extract_to_bronze, discord_extract_to_bronze, fortnite_api_extract_to_bronze, steam_extract_to_bronze],
         [twitch_to_silver, discord_to_silver, fortnite_api_to_silver, steam_to_silver],
         aggregate_gold_models,
+        [refresh_dashboards, ml_predictions],
     )
 
 fortnite_etl()
