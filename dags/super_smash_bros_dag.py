@@ -19,6 +19,10 @@ from airflow.models.baseoperator import chain
 ) 
 
 def super_smash_bros_operations_dag():
+    """
+    ### Super Smash Bros Operations DAG
+    This is a complex DAG intended to demonstrate the capabilities of implementing complexities of dependencies of Tasks and Task Groups in Airflow.
+    """
 
     games = ["Melee", "Brawl", "Ultimate"]
 
