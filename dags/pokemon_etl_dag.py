@@ -111,10 +111,40 @@ def pokemon_etl():
         """
         #### This function just prints a log statement, but ideally it would send an email of the csv 
         """
+        print(f"Sending {filename} to {email_recipients}...")
+
+    @task
+    def choose_pokemon(csv_filename):
+        # Read the CSV file and randomly choose one Pokémon
+        with open(csv_filename, "r", newline='') as csv_file:
+            reader = csv.DictReader(csv_file)
+            pokemon_data = list(reader)
+
+        # Randomly select a Pokémon from the CSV data
+        pokemon_of_day = random.choice(pokemon_data)
+        pokemon_name = pokemon_of_day["name"]
+        print(f"The Pokémon of the day is {pokemon_name}!")
         
-
+        return pokemon_name
+    
+    @task
+    def fetch_sprite(pokemon_name):
+        # Call the Pokémon API to get the sprite image
+        pokemon_api_url = f"https://pokeapi.co/api/v2/pokemon/{pokemon_name.lower()}"
+        response = requests.get(pokemon_api_url)
+        if response.status_code == 200:
+            pokemon_data = response.json()
+            sprite_url = pokemon_data['sprites']['front_default']
+            print(f"Sprite URL for {pokemon_name}: {sprite_url}")
+            return sprite_url
+        else:
+            print(f"Failed to fetch sprite for {pokemon_name}. Status code: {response.status_code}")
+            return None
+    
     pokemon_data = extract_transform()
-    load(pokemon_data)
-
+    csv_file = load(pokemon_data)
+    email_results(csv_file)
+    pokemon_of_the_day = choose_pokemon(csv_file)
+    fetch_sprite(pokemon_of_the_day)
 
 pokemon_etl()
