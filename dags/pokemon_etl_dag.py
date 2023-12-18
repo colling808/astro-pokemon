@@ -95,7 +95,10 @@ def pokemon_etl():
         Given a formatted list of list of Pokemon data, loads the data into a header-formatted csv file.
         """
 
-        headers = ["id", "name", "height", "weight", "type1", "type2", "ability1", "ability2", "total_stats", "hp", "attack", "defense", "special_attack", "special_defense", "speed"]
+        headers = ["id", "name", "height", "weight", "type1", 
+        "type2", "ability1", "ability2", "total_stats", "hp", 
+        "attack", "defense", "special_attack", "special_defense", "speed"
+        ]
         
         current_date = dt.now().strftime('%m%d%Y')
         csv_filename = f"{prefix}/pokemon_extract_{current_date}.csv"
